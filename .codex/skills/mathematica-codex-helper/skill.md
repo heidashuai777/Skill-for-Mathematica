@@ -1,58 +1,123 @@
 ---
 name: mathematica-codex-helper
-description: Generate human-readable Mathematica code with accurate use of built-in and physics packages by consulting official manual examples. Use this skill when the user asks to write Mathematica code or solve math/physics problems using Mathematica.
+description: Use when writing, reviewing, debugging, or explaining Wolfram Language / Mathematica code, notebooks, paclets, or math/physics derivations. This skill emphasizes human-readable code and package accuracy by grounding every nontrivial package call in manuals, examples, and smoke tests, especially for physics packages such as xAct, FeynCalc, FeynArts, FeynRules, Package-X, MaTeX, Q3, QuESTlink, Black Hole Perturbation Toolkit packages, and other domain paclets.
 metadata:
-  short-description: Provide step-by-step Mathematica code and derivations.
+  short-description: Human-readable Mathematica with manual-backed package usage.
 ---
 
-# Mathematica Coding Assistant
+# Mathematica Codex Helper
 
-## Goal
+## Purpose
 
-When a user asks for Mathematica code or solutions, produce well-structured, human-readable code along with complete mathematical derivations and explanations. Ensure accurate usage of any required packages by consulting the official Wolfram Language documentation and examples.
+Produce Mathematica / Wolfram Language code that a human physicist can read, modify, and trust. When a solution depends on a package, especially a physics package, first ground the implementation in the package manual and its examples. Treat examples as executable specifications: learn the loading syntax, argument order, naming conventions, options, and expected output from them before adapting the code.
 
-## Workflow
+## Hard Rules
 
-1. **Understand the Problem**  
-   Carefully read the user's request and identify the mathematical or physical problem they want to solve. Determine the required outputs, such as plots, numerical results, symbolic derivations, or visualizations.
+1. Do not invent package APIs. For every unfamiliar package symbol, consult local references, official documentation, paclet pages, example notebooks, tutorials, tests, or source examples before using it.
+2. Prefer built-in Wolfram Language functions when they solve the problem clearly. Use external packages only when they add necessary domain functionality.
+3. If documentation or examples are unavailable, say which function or convention is uncertain and provide either a built-in fallback or a minimal reproducible question for the user.
+4. For physics work, state conventions before code: units, metric signature, coordinate order, index positions, Fourier transform convention, normalization, and assumptions.
+5. Keep code readable. Avoid dense one-liners unless the user explicitly asks for compact code.
+6. Validate code through syntax checks, package-load checks, unchanged manual examples, adapted smoke tests, and physical sanity checks whenever possible.
 
-2. **Identify Necessary Packages and Functions**  
-   Determine whether built-in packages (e.g., `DifferentialEquations` or `Physics`), or external packages (e.g., `FeynCalc`, `QuantumOptics`) are needed. If a package is required, consult the official documentation for that package to find usage examples and ensure correct initialization and function calls.
+## Package Manual + Example Workflow
 
-3. **Consult Official Documentation Examples**  
-   For every unfamiliar function or package:  
-   - Search the Wolfram Language documentation or paclet manual for examples of usage.  
-   - Study the “Usage” and “Examples” sections to learn the required arguments, options, and common patterns.  
-   - Adapt the examples to the user's problem.
+When a package is involved, use this loop:
 
-4. **Prepare the Code**  
-   - Use descriptive variable names that reflect their meaning (e.g., `t` for time, `psi` for wavefunction).  
-   - Include comments (`(* comment *)`) explaining each step, referencing the source or idea behind the code when helpful.  
-   - Organize code into logical sections using blank lines and indentation to improve readability.  
-   - Load required packages with `Needs["PackageName``"]` at the top. Explain what each package provides.
+1. **Locate evidence**
+   - Search the repository, local docs, package examples, tutorial notebooks, test files, or official manual pages.
+   - Prefer official package docs and examples over blog posts or memory.
+   - For a package already in the repo, inspect its `README`, `Documentation`, `Examples`, `Tests`, `.wl`, `.m`, and `.nb` files.
 
-5. **Perform Step-by-Step Derivation**  
-   - Before presenting the code, outline the mathematical derivation or algorithm steps needed to solve the problem.  
-   - Present derivations symbolically when possible, using Mathematica functions (e.g., `Integrate`, `DSolve`, `Simplify`) to verify results.  
-   - If the problem involves physics, reference fundamental equations (e.g., Schrödinger equation, Newton's laws) and derive the required expressions.
+2. **Build a mini package card**
+   - Package name and context.
+   - Correct loading command, usually `Needs["context`"]` or the package's documented loader.
+   - Symbols to use.
+   - Minimal manual example.
+   - Options and assumptions that matter.
+   - Known pitfalls or version-sensitive syntax.
 
-6. **Write and Annotate Code**  
-   - Write the Mathematica code corresponding to each derivation step.  
-   - Insert explanatory comments before or after lines of code to link the code to the derivation.  
-   - If using package-specific functions, include a short comment summarizing their purpose and linking to the documentation example or page (use plain description; do not embed external URLs).
+3. **Run examples before adaptation**
+   - Load the package.
+   - Run the smallest official example unchanged when possible.
+   - Only then replace symbols, variables, dimensions, fields, manifolds, or parameters for the user's problem.
 
-7. **Run and Verify**  
-   - Use Mathematica to run the code and confirm that it produces the expected results.  
-   - If code uses random seeds or numerical solvers, set options like `WorkingPrecision` and `AccuracyGoal` to ensure stability.  
-   - Adjust code based on output and simplify expressions.
+4. **Adapt incrementally**
+   - Change one thing at a time from the official example.
+   - Keep a mapping such as `manualExampleVariable -> userProblemVariable`.
+   - Preserve the package's required order of definitions. For example, tensor packages often require defining manifolds and metrics before tensors or covariant derivatives.
 
-8. **Present the Result**  
-   - Provide the final code in a formatted Mathematica code block.  
-   - Include a brief summary of the result and any interpretations.  
-   - Encourage users to explore the referenced packages' examples for deeper understanding.
+5. **Record evidence in the answer**
+   - Briefly state which manual/example pattern the code follows.
+   - Do not paste large copyrighted manual passages. Summarize usage patterns and include only short snippets when necessary.
+
+For a fuller procedure, read `references/manual-example-integration.md`.
+
+## Mathematica Style Rules
+
+Follow `references/wolfram-style-guide.md`. Core rules:
+
+- Start scripts with `ClearAll["Global`*"]` only when appropriate for a standalone notebook or script.
+- Use descriptive names: `radialCoordinate`, `timeGrid`, `hamiltonian`, `metricTensor`.
+- Avoid `Subscript[x, 1]` as a program variable. Use `x1`, `x[1]`, or associations.
+- Separate symbolic and numerical stages.
+- Put assumptions in one place, e.g. `assumptions = {m > 0, omega > 0, hbar > 0};`.
+- Use `Simplify[expr, assumptions]` or `FullSimplify[expr, assumptions]` rather than relying on global state.
+- Prefer `NDSolveValue` over `NDSolve` when the desired result is an interpolating function.
+- Use `Module` for local scope in reusable functions.
+- Use comments to explain physics and package-specific steps, not obvious syntax.
+- Keep plots reproducible with explicit ranges, legends, labels, and units.
+
+## Physics Package Accuracy Rules
+
+Follow `references/physics-package-playbook.md`. Always check:
+
+- Conventions: units, metric signature, coordinates, index order, normalization, Fourier sign.
+- Dimensions: scalar, vector, matrix, tensor rank, spinor dimension, Hilbert-space dimension.
+- Symmetry: Hermiticity, tensor symmetries, gauge constraints, conservation laws.
+- Limits: zero-coupling, flat-space, nonrelativistic, classical, small-parameter, or known analytic limits.
+- Numerical stability: precision, stiffness, domain boundaries, singular points.
+
+## Response Template
+
+For nontrivial tasks, structure the answer as:
+
+1. **Plan and conventions**
+2. **Derivation**
+3. **Manual/example evidence**
+4. **Mathematica code**
+5. **Checks and interpretation**
+
+Use this code block language tag:
+
+```Mathematica
+(* Mathematica / Wolfram Language code here *)
+```
+
+## Validation Checklist
+
+Before finalizing code, run as many of these as possible:
+
+```Mathematica
+$Version
+Needs["PackageContext`"]
+Names["PackageContext`*"]
+Information[symbol]
+Options[symbol]
+```
+
+For a standalone `.wl` file, use:
+
+```bash
+wolframscript -script path/to/file.wl
+```
+
+If `wolframscript` is unavailable, do static checks and clearly say that runtime validation was not performed. Helper scripts are provided in `scripts/`.
 
 ## Example Triggers
 
-- “Write a human-readable Mathematica script to solve the Schrödinger equation for a harmonic oscillator, using the `Quantum` package.”  
-- “Generate Mathematica code to numerically integrate the Lorenz equations with appropriate packages.”  
-- “Use Mathematica to compute and plot the Laplace transform of a given function.”
+- "Write readable Mathematica code for the hydrogen radial equation and verify normalization."
+- "Use xAct to compute Christoffel symbols and Ricci scalar for this metric."
+- "Use FeynCalc for a gamma-matrix trace, but follow the official examples."
+- "Convert this physics derivation into a well-commented Mathematica notebook."
+- "Debug this Mathematica package code and check whether the package API is being used correctly."
