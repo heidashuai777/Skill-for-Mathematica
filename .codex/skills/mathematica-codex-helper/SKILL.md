@@ -7,136 +7,74 @@ metadata:
 
 # Mathematica Codex Helper
 
-## Purpose
+## Overview
 
-This skill gives Codex domain expertise in writing and explaining Mathematica code for mathematical and physics workflows. It aims to:
+This skill provides Codex with domain expertise for Mathematica and physics workflows. It helps you write code a physicist can read, modify and trust while maintaining mathematical and physical context【turn5file1†L16-L24】. To curb hallucinations, always back up package calls with evidence from official manuals, examples or source. When uncertain, say so and ask for clarification【turn5file1†L25-L35】.
 
-- Produce code that a physicist can read, modify, and trust.
-- Provide full mathematical derivations and physical context alongside the code.
-- Avoid hallucinating package APIs by consulting official manuals, examples, paclet docs, test suites, and source when needed.
-- Clarify physics conventions (units, metric signatures, coordinate order, index positions, normalization, Fourier convention, etc.) before deriving or computing anything.
-- Include physical and mathematical sanity checks to catch bugs early.
-- Separate symbolic derivations from numerical evaluations and keep code reproducible.
+## Core Principles
 
-## Hard Rules
+### Evidence‑Backed API usage
 
-1. **Ground package usage in evidence**. Never invent APIs or guess symbol contexts. For every unfamiliar symbol or package call, consult official documentation, paclet pages, tutorial notebooks, tests, or source examples. Prefer manual examples over blog posts or memory. If you cannot find evidence, state the uncertainty and provide a built‑in fallback or ask the user for more context.
+- Never invent APIs or guess symbol contexts【turn5file1†L25-L35】. Before using any unfamiliar symbol or package, consult official documentation, tutorial notebooks, test suites or source examples and summarise the evidence used.
+- Prefer built‑in Wolfram Language functions when they suffice; load external packages only for domain‑specific features.
 
-2. **Prefer built‑in functionality**. Use built‑in Wolfram Language functions whenever they solve the problem clearly. Load external packages only when necessary for domain‑specific features.
+### Explicit Physics Conventions
 
-3. **Declare conventions explicitly**. Before writing code, state the unit system (SI, natural units, geometrized, etc.), metric signature (mostly plus vs. mostly minus), coordinate order, index variance (covariant vs. contravariant), Fourier transform convention, normalization of states, and boundary conditions. This prevents mismatches when using tensor and quantum packages.
+- Always declare unit systems, metric signature (mostly plus or minus), coordinate order, index variance, Fourier convention, normalization and boundary conditions at the outset【turn5file1†L25-L35】. These conventions prevent mismatches between tensor and quantum packages.
 
-4. **Keep the code readable**. Avoid dense one‑liners unless explicitly requested. Use descriptive variable names, indent logically, and separate code blocks with blank lines. Put assumptions and parameters in one place and reuse them.
+### Readability and Structure
 
-5. **Validate everything**. Run syntax checks (`Information[symbol]`, `Options[symbol]`), load checks (`Needs["Context``"]`), and small smoke tests before adapting package examples. For physics code, always include at least one physical or mathematical check (e.g., normalization, Hermiticity, symmetry properties, known limits) to confirm the result.
+- Write clear, well‑indented code with descriptive variable names【turn5file1†L25-L35】.
+- Organise scripts into setup, assumptions/constants, definitions, derivation/computation, visualisation, and checks.
+- Separate symbolic derivations from numerical evaluations, substituting numeric parameters only after symbolic work is complete.
 
-## Package Manual + Example Workflow
+### Validation and Sanity Checks
 
-When a package is involved, follow this workflow:
+- Run syntax and load checks (e.g. `Information[symbol]`, `Needs["Context``"]`) before adapting examples.
+- Include at least one physical or mathematical check, such as normalization integrals, symmetry properties or known limits【turn5file1†L25-L35】. Highlight any uncertainty.
 
-1. **Locate evidence**. Search in order: official paclet docs (Mathematica doc center), included tutorial notebooks and examples, test files, source code, repository README, maintainer blog posts, and, as a last resort, general web examples. Document the sources used.
+## Package Evidence Workflow
 
-2. **Build a package evidence card**. Summarize: package name, version, loading command (`Needs["Context``"]` or documented loader), symbols to use, a minimal official example, important options, assumptions, and any pitfalls or version differences.
+When using external packages, follow this streamlined workflow:
 
-3. **Run a minimal example unchanged**. Load the package and run the smallest official example that uses the required symbol. Verify that the example runs without errors and returns the documented result.
-
-4. **Adapt incrementally**. Change variables, dimensions, or options one at a time. Maintain a mapping from the manual example variables to the user’s problem. Respect the order of definitions (e.g., define manifolds and metrics before tensors). Test after each change.
-
-5. **Record evidence in the answer**. Briefly state which manual example pattern the code follows. Do not copy large chunks of manual text; instead, summarise usage patterns and mention any key options or caveats. When uncertain, explicitly note the uncertainty.
-
-## Mathematica Style Guidelines
-
-Use a clear structure:
-
-1. **Setup & packages**. Load built‑in packages with `Needs["Context``"]`, and clear the global context if appropriate (`ClearAll["Global`*"]`).
-2. **Assumptions & constants**. Collect all physical constants and assumptions into `assumptions = {...}` and reuse them with `FullSimplify` or `Integrate`.
-3. **Definitions**. Define functions and variables with descriptive names. Use `Module` for local scope.
-4. **Derivation / computation**. Perform symbolic derivations first, then substitute numerical values only if needed. Use `Simplify`, `FullSimplify`, `Assuming`, etc. Avoid mixing symbolic and numerical evaluations.
-5. **Visualization / output**. Plot results with labels and ranges. Use `PlotLabel`, `AxesLabel`, and units where appropriate.
-6. **Checks & validation**. Include tests such as normalization integrals, Hermiticity tests, flat‑space or classical limits, or dimension checks.
-
-Naming conventions:
-
-- Use descriptive names like `radialCoordinate`, `metricTensor`, `hamiltonian`, `effectivePotential`, etc.
-- Use standard physics symbols (`ψ`, `hbar`, `ω`) only for well‑known quantities; avoid cryptic short names otherwise.
-- Avoid using `Subscript[x,1]` as a variable; use `x1` or `x[1]` for computational purposes.
-
-Separate symbolic and numerical code:
-
-```Mathematica
-(* Symbolic derivation *)
-symbolicResult = FullSimplify[expr, assumptions];
-
-(* Numerical evaluation *)
-numericParams = {m -> 1, ω -> 2, ℏ -> 1};
-numericResult = N[symbolicResult /. numericParams, 30];
-```
-
-Use explicit assumptions instead of hidden global assumptions:
-
-```Mathematica
-FullSimplify[expr, assumptions]
-```
-
-Plotting best practices:
-
-```Mathematica
-Plot[
-  Evaluate[potential[x]],
-  {x, xmin, xmax},
-  AxesLabel -> {"x", "V(x)"},
-  PlotLabel -> "Potential Energy",
-  PlotRange -> All
-]
-```
-
-## Physics Package Accuracy Rules
-
-For domain packages (xAct, FeynCalc, FeynRules, Package‑X, Q3, QuESTlink, BHPT paclets, etc.), always check:
-
-- **Conventions**: units, metric signature, coordinate order, index variance, gamma matrix conventions, Dirac sign convention, Fourier transform sign, spinor basis, state normalization. Many packages have built‑in choices (e.g., xAct uses mostly minus). Document them.
-
-- **Dimensions**: confirm scalar vs. vector vs. matrix vs. tensor rank, Hilbert space dimension, spinor dimension. Many packages require specifying dimensionality explicitly.
-
-- **Symmetries & identities**: check whether tensors are symmetric, antisymmetric, hermitian, etc. Use `TensorSymmetry` or package‑specific canonicalization. Verify gauge invariants, conservation laws, or conserved quantities.
-
-- **Limits & checks**: test zero‑coupling limits, flat‑space limits, low‑multipole or high‑energy limits, classical limits (`ℏ → 0`), etc. If the package is used for GR, check the Schwarzschild limit of Kerr; if for QFT, check trace identities; if for QM, verify normalization and Hermiticity.
-
-- **Version differences**: document any version‑specific syntax or options. Many physics paclets change APIs across releases; always check the documentation for the installed version.
+1. **Locate evidence** – search official paclet documentation, tutorial notebooks, tests, source code or maintainer notes in that order. Gather relevant examples.
+2. **Create an evidence card** – summarise the package name, version, loading command (`Needs["Context``"]`), relevant symbols, a minimal official example and key options or pitfalls.
+3. **Verify an official example** – run the smallest official example unchanged to ensure your environment matches the documentation.
+4. **Adapt incrementally** – modify variables, dimensions and options one at a time, respecting the order of definitions. Test each change before proceeding.
+5. **Document evidence** – in your answer, briefly state which example pattern you followed and any deviations or uncertainties.
 
 ## Response Template
 
-When using this skill for a nontrivial task, structure the answer as follows:
+A well‑structured answer should include:
 
-1. **Plan & conventions**. Briefly explain the problem, identify required packages, and state conventions (units, signature, etc.).
-2. **Mathematical derivation**. Present step‑by‑step derivations, including equations used and assumptions. Use Wolfram Language functions for symbolic checks when appropriate.
-3. **Manual/example evidence**. Summarize which manual examples you consulted, what they taught you (e.g., the correct loading command and argument order), and how you adapted them.
-4. **Mathematica code**. Provide the complete code in a fenced `Mathematica` code block. Include comments to map the code to the derivation and note any package conventions.
-5. **Checks & interpretation**. Show at least one numerical or symbolic check of the result. Interpret the output in context.
+1. **Plan & conventions** – summarise the problem and required packages, and state all conventions used.
+2. **Mathematical derivation** – present step‑by‑step derivations with equations and assumptions.
+3. **Evidence summary** – mention the official examples consulted and how they guided your solution.
+4. **Mathematica code** – provide fully commented code in a fenced `Mathematica` block, mapping code lines back to the derivation.
+5. **Checks & interpretation** – perform at least one check (symbolic or numerical) and interpret the result in context.
 
-Use fenced code blocks like this:
+Use fenced code blocks like:
 
 ```Mathematica
 (* Mathematica / Wolfram Language code *)
 ```
 
-## Example Triggers
+## Trigger Examples
 
-Trigger this skill when the user asks to:
+Invoke this skill when a user asks to:
 
-- “Write a readable Mathematica script for the hydrogen atom radial equation and verify normalization.”
-- “Solve the Schrödinger equation for a harmonic oscillator using the Quantum paclet; include derivation.”
-- “Use xAct to compute Christoffel symbols and the Ricci scalar of this metric, following the official examples.”
-- “Use FeynCalc for a gamma matrix trace; follow the manual examples and show smoke tests.”
-- “Convert this physics derivation into a Mathematica notebook‑style script.”
-- “Debug this Mathematica package code and check whether the package API is used correctly.”
+- Write a readable Mathematica script for the hydrogen atom radial equation and verify normalization.
+- Solve the Schrödinger equation for a harmonic oscillator using the Quantum paclet, including derivation.
+- Compute Christoffel symbols and Ricci scalars with xAct following official examples.
+- Perform gamma matrix traces with FeynCalc, citing the manual examples and running smoke tests.
+- Convert a physics derivation into a clear Mathematica notebook‑style script or debug Mathematica code for correct package usage.
 
 ## Further Reading
 
-This skill comes with additional references located in the `references/` directory:
+See the `references` folder for detailed guidelines:
 
-- `manual-example-integration.md` – A detailed protocol for integrating official package manuals and examples into your workflow. It includes source prioritisation, how to build an evidence card, extraction methods, adaptation guidelines, validation layers, and anti‑hallucination rules.
-- `wolfram-style-guide.md` – A style guide for human‑readable Mathematica code, covering structure, naming, scoping, symbolic vs. numerical work, plotting, comments, and reproducibility.
-- `physics-package-playbook.md` – A playbook of guardrails for physics packages, including guidelines and checks for xAct, FeynCalc, FeynRules, Package‑X, quantum paclets, black‑hole perturbation paclets, and more.
+- **manual-example-integration.md** – step‑by‑step protocol for integrating official manuals and examples.
+- **wolfram-style-guide.md** – style guide for readable Mathematica code.
+- **physics-package-playbook.md** – guardrails and checks for physics packages including xAct, FeynCalc, FeynRules, Package‑X, quantum paclets and BHPT paclets.
 
-Refer to these documents for deeper examples and best practices.
+This new version condenses the original skill while preserving its core intent and workflows. Use it as a quick‑reference guide and consult the supporting documents for deeper details.
