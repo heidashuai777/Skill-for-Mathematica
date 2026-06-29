@@ -1,0 +1,7 @@
+interface:
+  display_name: "Mathematica Codex Helper"
+  short_description: "Manual-backed Wolfram and physics coding"
+  default_prompt: "Use $mathematica-codex-helper to write readable Wolfram Language code with evidence-backed package usage and validation checks."
+
+policy:
+  allow_implicit_invocation: true

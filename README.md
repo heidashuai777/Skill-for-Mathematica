@@ -1,6 +1,12 @@
 # Skill for Mathematica
 
+[![Validate](https://github.com/heidashuai777/Skill-for-Mathematica/actions/workflows/validate.yml/badge.svg)](https://github.com/heidashuai777/Skill-for-Mathematica/actions/workflows/validate.yml)
+
 This repository contains a Codex skill for writing readable Mathematica / Wolfram Language code with stronger package accuracy, especially for physics packages.
+
+Current release target: `v0.2.0`
+
+License: MIT
 
 The skill is located at:
 
@@ -130,3 +136,21 @@ artifacts/semantic-index/
 ```
 
 Cache only public metadata or user-approved snippets. Do not cache secrets, private notebooks, proprietary package docs, or unpublished research code unless explicitly requested.
+
+## Validation
+
+Run the local validation suite before publishing changes:
+
+```bash
+python -B tests/validate_resource_scaffold.py
+python -B tests/validate_repo_completeness.py
+python -B -m unittest discover -s tests
+python -B -c "import json; json.load(open('data/wolfram-resource-manifest.json', encoding='utf-8')); print('json ok')"
+diff -q .codex/skills/mathematica-codex-helper/SKILL.md .codex/skills/mathematica-codex-helper/skill.md
+```
+
+GitHub Actions runs the same deterministic checks without requiring Wolfram credentials.
+
+## Release
+
+`v0.2.0` is the resource-aware scaffold release. It adds Wolfram resource routing, helper scripts, validation, CI, and repository metadata while keeping docs-only mode available.
