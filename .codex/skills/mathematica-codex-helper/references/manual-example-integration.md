@@ -60,7 +60,7 @@ Tests/
 *.nb
 ```
 
-Use `scripts/extract_wl_examples.py` to extract fenced Mathematica blocks from Markdown files and collect `.wl` examples into JSONL.
+Use `scripts/extract_wl_examples.py` to extract fenced Mathematica/Wolfram Language blocks from Markdown files and collect `.wl` / `.m` examples into JSONL. Notebook files (`.nb`) require manual export or conversion before extraction.
 
 ## Adaptation Method
 
