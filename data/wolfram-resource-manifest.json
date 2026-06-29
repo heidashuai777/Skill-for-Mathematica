@@ -1,0 +1,113 @@
+{
+  "schema_version": "0.1.0",
+  "purpose": "Structured inventory for the Mathematica Codex Helper resource-aware scaffold. Entries are candidate Wolfram resources to verify before use, not guarantees of live availability.",
+  "modes": [
+    {
+      "name": "docs-only",
+      "requires_network": false,
+      "requires_wolfram_credentials": false,
+      "description": "Use static SKILL.md and references guidance when live Wolfram resources are unavailable or unnecessary."
+    },
+    {
+      "name": "resource-aware",
+      "requires_network": true,
+      "requires_wolfram_credentials": "sometimes",
+      "description": "Resolve named Wolfram prompts or example resources when package usage, code transformation, or verified examples materially affect correctness."
+    },
+    {
+      "name": "strict-validation",
+      "requires_network": true,
+      "requires_wolfram_credentials": "sometimes",
+      "description": "Add an assessment pass, evidence card, smoke test, and mathematical or physical sanity check for high-risk answers."
+    }
+  ],
+  "prompts": [
+    {
+      "name": "WolframSampleCode",
+      "repository": "Wolfram Prompt Repository",
+      "role": "canonical short usage examples for Wolfram Language functions and resources",
+      "use_when": "A user asks how to use a Wolfram symbol, ResourceFunction, or concise language pattern."
+    },
+    {
+      "name": "CodeReformat",
+      "repository": "Wolfram Prompt Repository",
+      "role": "post-generation style cleanup for Wolfram Language code",
+      "use_when": "User asks for code readability, formatting, or cleanup without changing semantics."
+    },
+    {
+      "name": "CodeCommentInsert",
+      "repository": "Wolfram Prompt Repository",
+      "role": "intent-focused comments for Wolfram Language code",
+      "use_when": "User asks to add comments to existing Mathematica code."
+    },
+    {
+      "name": "CodeDocAnnotator",
+      "repository": "Wolfram Prompt Repository",
+      "role": "package documentation scaffolding and usage-message drafting",
+      "use_when": "User asks for usage messages, function docs, or paclet-style documentation text."
+    },
+    {
+      "name": "FunctionNameSuggest",
+      "repository": "Wolfram Prompt Repository",
+      "role": "readable Wolfram Language function naming suggestions",
+      "use_when": "User asks to rename functions or improve package API readability."
+    },
+    {
+      "name": "VariableNameSuggest",
+      "repository": "Wolfram Prompt Repository",
+      "role": "readable variable naming suggestions",
+      "use_when": "User asks to clarify notebook or package code variable names."
+    },
+    {
+      "name": "LLMPromptAssessment",
+      "repository": "Wolfram Prompt Repository",
+      "role": "self-assessment rubric for hallucination, convention, and evidence checks",
+      "use_when": "Strict validation is requested or the answer uses unfamiliar Wolfram package APIs."
+    }
+  ],
+  "examples": [
+    {
+      "name": "Generate Email Replies with a Semantic Search Memory",
+      "repository": "Wolfram Example Repository",
+      "role": "pattern for maintaining a compact trusted example memory",
+      "use_when": "Future work adds a local cache or retrieval memory of verified Wolfram examples."
+    },
+    {
+      "name": "Provide Socioeconomic Data with an LLM Tool to Avoid Hallucinations",
+      "repository": "Wolfram Example Repository",
+      "role": "pattern for tool-mediated exact lookup to avoid hallucinated facts or symbols",
+      "use_when": "Future work exposes a Wolfram evidence lookup helper."
+    },
+    {
+      "name": "Re-ranking Text Matches in Semantic Search Queries",
+      "repository": "Wolfram Example Repository",
+      "role": "pattern for reranking retrieved snippets before adapting them",
+      "use_when": "Future work adds semantic search over verified manual or example snippets."
+    }
+  ],
+  "validation": {
+    "required_evidence_fields": [
+      "package_or_resource",
+      "source_checked",
+      "load_command",
+      "symbols_used",
+      "minimal_example",
+      "adaptation_map",
+      "smoke_test",
+      "conventions",
+      "remaining_uncertainty"
+    ],
+    "strict_mode_requires": [
+      "named prompt or example candidates when relevant",
+      "manual or example evidence before unfamiliar package APIs",
+      "one syntax, load, or static validation check",
+      "one mathematical or physical sanity check for scientific workflows",
+      "explicit note when live Wolfram resources were not available"
+    ],
+    "fail_closed_behavior": [
+      "do not invent prompt names, example names, context strings, option names, or package symbols",
+      "fall back to docs-only mode when resources cannot be verified",
+      "state uncertainty in the final answer rather than hiding it"
+    ]
+  }
+}
