@@ -40,6 +40,10 @@ def main() -> None:
         "Resource-aware workflow",
         "Fail closed",
         "wolfram-resource-integration.md",
+        "sectioned scripts",
+        "quiet logging",
+        "main calculation",
+        "verification",
     ]
     for term in required_skill_terms:
         require(term in skill_text, f"missing skill routing term: {term}")
@@ -55,6 +59,36 @@ def main() -> None:
     ]
     for term in required_reference_terms:
         require(term in reference_text, f"missing reference term: {term}")
+
+    style_reference = SKILL_DIR / "references" / "wolfram-style-guide.md"
+    style_text = read(style_reference)
+    required_style_terms = [
+        "Sectioning Template",
+        "::Section::",
+        "::Subsection::",
+        "quietLog",
+        "SetDirectory",
+        "Print",
+        "ParallelMap",
+        "TimeConstrained",
+        "Package Conflict Safety",
+        "Result Simplification Loop",
+        "Main Calculation vs Verification",
+    ]
+    for term in required_style_terms:
+        require(term in style_text, f"missing style-guide term: {term}")
+
+    wolfram_doc_urls = [
+        "https://reference.wolfram.com/language/ref/Needs.html",
+        "https://reference.wolfram.com/language/ref/BeginPackage.html",
+        "https://reference.wolfram.com/language/ref/ParallelMap.html",
+        "https://reference.wolfram.com/language/ref/FullSimplify.html",
+        "https://reference.wolfram.com/language/ref/TimeConstrained.html",
+        "https://reference.wolfram.com/language/ref/Message.html",
+        "https://reference.wolfram.com/language/ref/Echo.html",
+    ]
+    for url in wolfram_doc_urls:
+        require(url in style_text, f"missing Wolfram documentation URL: {url}")
 
     readme_text = read(readme)
     for term in ["Wolfram resource integration", "Resource-aware mode", "Strict validation mode"]:

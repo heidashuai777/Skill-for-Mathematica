@@ -1,6 +1,6 @@
 ---
 name: mathematica-codex-helper
-description: Use when writing, reviewing, debugging, or explaining Wolfram Language / Mathematica code, notebooks, paclets, package docs, or math/physics derivations, especially when correctness depends on manuals, Wolfram Prompt Repository assets, Wolfram Example Repository patterns, smoke tests, explicit conventions, or physics packages such as xAct, FeynCalc, FeynArts, FeynRules, Package-X, MaTeX, Q3, QuESTlink, and black-hole paclets.
+description: Use when writing, reviewing, debugging, optimizing, or explaining Wolfram Language / Mathematica code, notebooks, scripts, paclets, package docs, or math/physics derivations, especially when correctness depends on manuals, Wolfram examples, readable sectioned programs, package conflict safety, efficient simplification, parallel execution, smoke tests, or physics packages such as xAct, FeynCalc, FeynArts, FeynRules, Package-X, MaTeX, Q3, QuESTlink, and black-hole paclets.
 ---
 
 # Mathematica Codex Helper
@@ -24,14 +24,21 @@ This skill helps Codex write Wolfram Language code that a mathematician or physi
 ### Readability and Structure
 
 - Write clear, well-indented code with descriptive variable names.
-- Organize scripts into setup, assumptions/constants, definitions, derivation/computation, visualization, and checks.
+- Organize every nontrivial script into sectioned scripts using `(* ::Section:: *)` and `(* ::Subsection:: *)`: setup, assumptions/constants, definitions, main calculation, output, and verification.
+- Keep the main calculation separate from verification/check code. A user should be able to rerun checks without hunting through the calculation body.
 - Separate symbolic derivations from numerical evaluations, substituting numeric parameters only after symbolic work is complete.
+- Prefer concise Wolfram idioms from official examples. Avoid boilerplate like `projectDir = "..."; SetDirectory[projectDir];` when `SetDirectory["..."];` is clearer and the path is not reused.
+- Add annotations that explain intent, assumptions, package-order constraints, and non-obvious transformations. Do not annotate trivial assignments.
+- Avoid raw `Print` in reusable scripts. Prefer quiet logging helpers, returned summaries, `Echo` for interactive probes, `Message` for package-style diagnostics, and saved status/summary associations.
+- Optimize iteratively: remove unused wrappers, collapse one-use variables, use `Dispatch` for large replacement rule sets, use `Together`/`Cancel` before expensive simplification, and cap global `FullSimplify` with `TimeConstrained` or `TimeConstraint`.
+- Use `ParallelMap`, `ParallelTable`, or `ParallelSubmit` only for independent, side-effect-free work, after distributing required definitions and checking memory pressure.
 
 ### Validation and Sanity Checks
 
 - Run syntax and load checks (e.g. `Information[symbol]`, `Needs["Context``"]`) before adapting examples.
 - Include at least one physical or mathematical check, such as normalization integrals, symmetry properties, conservation laws, or known limits.
 - Highlight uncertainty and state when runtime execution was not possible.
+- For final symbolic results, repeatedly simplify and audit outputs for unresolved package heads, stale dimension symbols, notebook-only boxes, debug wrappers, `$Failed`, `$TimedOut`, `Indeterminate`, and unexpected infinities.
 
 ## Wolfram resource routing
 
@@ -65,6 +72,8 @@ For nontrivial package, physics, documentation, or code-transformation tasks:
 6. Generate the answer from verified patterns, adapting one concept at a time.
 7. Include a smoke test and one mathematical or physical sanity check when relevant.
 
+When writing or refactoring `.wl` scripts, read `references/wolfram-style-guide.md` and follow its sectioning, quiet logging, main calculation vs verification, package conflict safety, parallelism, and result simplification guidance.
+
 ### Wolfram evidence card
 
 ```markdown
@@ -90,6 +99,8 @@ When using external packages, follow this streamlined workflow:
 3. **Verify an official example** - run the smallest official example unchanged when possible.
 4. **Adapt incrementally** - modify variables, dimensions, conventions, and options one at a time, respecting documented setup order.
 5. **Document evidence** - briefly state which example pattern or resource guided the answer and where verification stopped.
+
+Load packages deliberately. Use `Needs` or `Get` in a single setup section, isolate package-specific calls behind small functions, check exported symbols before relying on them, and avoid leaking third-party contexts into final results.
 
 ## Response Template
 

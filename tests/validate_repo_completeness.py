@@ -44,8 +44,9 @@ def main() -> None:
         require(term in metadata, f"openai.yaml missing term: {term}")
 
     changelog = require_file("CHANGELOG.md")
-    require("## v0.2.0 - 2026-06-29" in changelog, "CHANGELOG must document v0.2.0")
+    require("## v0.3.0 - 2026-06-30" in changelog, "CHANGELOG must document v0.3.0")
     require("resource-aware" in changelog.lower(), "CHANGELOG must describe resource-aware changes")
+    require("section/subsection" in changelog, "CHANGELOG must describe readability changes")
 
     contributing = require_file("CONTRIBUTING.md")
     require("python -B -m unittest discover -s tests" in contributing, "CONTRIBUTING must document tests")
@@ -54,7 +55,7 @@ def main() -> None:
     require("Do not report secrets in public issues" in security, "SECURITY must include private-reporting guidance")
 
     readme = read("README.md")
-    for term in ["MIT", "v0.2.0", "Validation"]:
+    for term in ["MIT", "v0.3.0", "Validation", "quiet diagnostics", "parallel execution"]:
         require(term in readme, f"README missing completion term: {term}")
 
     print("repo completeness validation passed")

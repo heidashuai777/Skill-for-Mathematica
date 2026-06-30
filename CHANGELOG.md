@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.0 - 2026-06-30
+
+- Add production `.wl` style guidance from recent long-form Mathematica calculation scripts.
+- Require section/subsection organization, annotations, concise Wolfram idioms, and separate main calculation vs verification blocks.
+- Add guidance to avoid noisy `Print`, prefer quiet status/summary diagnostics, and use `Message`/`Echo` appropriately.
+- Add package conflict safety, bounded simplification, result audits, and safe parallel-computing rules.
+
 ## v0.2.0 - 2026-06-29
 
 - Add resource-aware Wolfram Prompt Repository and Wolfram Example Repository routing guidance.
