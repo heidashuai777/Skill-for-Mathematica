@@ -4,7 +4,7 @@
 
 This repository contains a Codex skill for writing readable Mathematica / Wolfram Language code with stronger package accuracy, especially for physics packages.
 
-Current release target: `v0.2.0`
+Current release target: `v0.3.0`
 
 License: MIT
 
@@ -28,6 +28,9 @@ A lowercase copy is also included at:
 - Package usage grounded in manuals and examples.
 - Minimal smoke tests before adapting package examples.
 - Runtime or static validation when possible.
+- Sectioned `.wl` scripts with clear main calculation and verification sections.
+- quiet diagnostics instead of noisy `Print` output in reusable programs.
+- Iterative simplification, package conflict checks, and parallel execution only when safe.
 
 ## Supporting references
 
@@ -153,4 +156,4 @@ GitHub Actions runs the same deterministic checks without requiring Wolfram cred
 
 ## Release
 
-`v0.2.0` is the resource-aware scaffold release. It adds Wolfram resource routing, helper scripts, validation, CI, and repository metadata while keeping docs-only mode available.
+`v0.3.0` upgrades the coding-style guidance for production Mathematica scripts: section/subsection structure, concise Wolfram idioms, annotations, package conflict safety, quiet logging, bounded simplification, parallelism, and separated verification blocks.
