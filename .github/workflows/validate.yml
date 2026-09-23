@@ -23,6 +23,9 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Validate skill package
+        run: python -B tests/check_skill.py
+
       - name: Validate resource scaffold
         run: python -B tests/validate_resource_scaffold.py
 
@@ -35,5 +38,3 @@ jobs:
       - name: Validate manifest JSON
         run: python -B -c "import json; json.load(open('data/wolfram-resource-manifest.json', encoding='utf-8')); print('json ok')"
 
-      - name: Check skill file synchronization
-        run: diff -q .codex/skills/mathematica-codex-helper/SKILL.md .codex/skills/mathematica-codex-helper/skill.md

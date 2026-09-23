@@ -28,16 +28,17 @@ def main() -> None:
 
     workflow = require_file(".github/workflows/validate.yml")
     for command in [
+        "python -B tests/check_skill.py",
         "python -B tests/validate_resource_scaffold.py",
         "python -B tests/validate_repo_completeness.py",
         "python -B -m unittest discover -s tests",
     ]:
         require(command in workflow, f"workflow missing command: {command}")
 
-    metadata = require_file(".codex/skills/mathematica-codex-helper/agents/openai.yaml")
+    metadata = require_file(".agents/skills/mathematica-codex-helper/agents/openai.yaml")
     for term in [
         'display_name: "Mathematica Codex Helper"',
-        'short_description: "Manual-backed Wolfram and physics coding"',
+        'short_description: "Notebook-first Mathematica research calculations"',
         'default_prompt: "Use $mathematica-codex-helper',
         "allow_implicit_invocation: true",
     ]:
@@ -55,7 +56,7 @@ def main() -> None:
     require("Do not report secrets in public issues" in security, "SECURITY must include private-reporting guidance")
 
     readme = read("README.md")
-    for term in ["MIT", "v0.3.0", "Validation", "quiet diagnostics", "parallel execution"]:
+    for term in ["MIT", "notebook-first", "Validation", "parallel execution", "memory"]:
         require(term in readme, f"README missing completion term: {term}")
 
     print("repo completeness validation passed")
