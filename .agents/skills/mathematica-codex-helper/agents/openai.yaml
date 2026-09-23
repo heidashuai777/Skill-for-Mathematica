@@ -1,0 +1,7 @@
+interface:
+  display_name: "Mathematica Codex Helper"
+  short_description: "Notebook-first Mathematica research calculations"
+  default_prompt: "Use $mathematica-codex-helper for output-driven Mathematica research calculations with readable sections, selective checkpoints, and resource-aware runtime. Route full scattering-amplitude pipelines to $ampred-amplitude-calculation."
+
+policy:
+  allow_implicit_invocation: true

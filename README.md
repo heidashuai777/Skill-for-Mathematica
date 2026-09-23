@@ -1,159 +1,154 @@
-# Skill for Mathematica
+# Mathematica: notebook-first research
 
-[![Validate](https://github.com/heidashuai777/Skill-for-Mathematica/actions/workflows/validate.yml/badge.svg)](https://github.com/heidashuai777/Skill-for-Mathematica/actions/workflows/validate.yml)
+A Codex skill for Mathematica/Wolfram Language calculations that read like a
+researcher's notebook: direct mathematics, clear sections, actual intermediate
+outputs and a small number of useful files.
 
-This repository contains a Codex skill for writing readable Mathematica / Wolfram Language code with stronger package accuracy, especially for physics packages.
+**Write → evaluate → inspect → decide → fix or continue.**
 
-Current release target: `v0.3.0`
+The default deliverable is one authoritative `.nb`, `.m` or `.wl` calculation,
+not a generated application. No automatic Summary section, stage report files,
+helper-function forest, or disk copy of every intermediate expression.
 
-License: MIT
+## Use it
 
-The skill is located at:
+The canonical skill is [SKILL.md](.agents/skills/mathematica-codex-helper/SKILL.md).
+Current Codex documentation specifies `.agents/skills` for repository-local
+skills and `~/.agents/skills` for user-level skills. This version replaces the
+legacy `.codex/skills` copies with one uppercase `SKILL.md`; keeping two same-name
+skills does not merge their instructions. See [OpenAI's skill documentation](https://developers.openai.com/codex/skills).
 
-```
-.codex/skills/mathematica-codex-helper/SKILL.md
-```
+Open this repository in your Codex workspace, then include the skill in a prompt:
 
-A lowercase copy is also included at:
-
-```
-.codex/skills/mathematica-codex-helper/skill.md
-```
-
-## What the skill enforces
-
-- Human-readable Mathematica code.
-- Clear mathematical derivations before code.
-- Explicit physics conventions.
-- Package usage grounded in manuals and examples.
-- Minimal smoke tests before adapting package examples.
-- Runtime or static validation when possible.
-- Sectioned `.wl` scripts with clear main calculation and verification sections.
-- quiet diagnostics instead of noisy `Print` output in reusable programs.
-- Iterative simplification, package conflict checks, and parallel execution only when safe.
-
-## Supporting references
-
-```
-.codex/skills/mathematica-codex-helper/references/manual-example-integration.md
-.codex/skills/mathematica-codex-helper/references/wolfram-style-guide.md
-.codex/skills/mathematica-codex-helper/references/physics-package-playbook.md
-.codex/skills/mathematica-codex-helper/references/wolfram-resource-integration.md
+```text
+$mathematica-codex-helper
+Continue my calculation in its existing file. Use mathematical sections,
+read the actual result at uncertain steps, and save only useful expensive
+intermediates. No Summary section or extra helper files.
 ```
 
-## Typical requests
+In Codex CLI/IDE, `/skills` or `$` can select a skill. Typing `$` is not a shell
+command or an automatic installer. Codex can also select a skill by its description;
+explicit invocation is useful for a first test. Changes are normally detected
+automatically; restart if the updated skill does not appear.
 
+For another research project, copy **only** the
+`.agents/skills/mathematica-codex-helper` directory into that project's
+`.agents/skills/`, or install that directory once under `~/.agents/skills/`.
+Keep its references and example with it. Do not copy this entire repository's
+maintenance files into each calculation. Avoid an old user-level installation
+shadowing or duplicating the new version.
+
+This skill supplies instructions, not Mathematica, package installations, a
+licence or a persistent kernel. Codex must use the actual evaluator available
+in its execution environment. Without one it can edit code, but must label it
+unexecuted rather than inventing intermediate outputs.
+
+## What changes in practice
+
+| Default | Behaviour |
+| --- | --- |
+| Organisation | One calculation; mathematical sections |
+| New functions | Mathematical meaning or real reuse |
+| New files | Explicit reuse/isolation/resource reason |
+| Execution | Observe before dependent decisions |
+| Acceleration | Independent tasks; bounded shared resources |
+| Memory safety | Live host/process monitoring; selective limits |
+| Display | Relevant result or bounded sample |
+| Persistence | Deliverables, original inputs, costly reusable results |
+| Documentation | Version-matching example on demand |
+| Final response | Changed path and actual test status |
+
+The one-file default is not a ban on reusable packages. A real shared rules file,
+an incompatible-package boundary or an independent expensive computation can
+justify another file. Neither one file nor short code is an excuse to hide
+mathematics inside a giant function.
+
+## Acceleration and concurrent programs
+
+The skill now requires Codex to look for runtime improvements, not merely write
+parallel-looking code. Independent ready jobs should run concurrently when their
+CPU, memory and licence allocations fit. Use a bounded Mathematica subkernel pool
+or separate existing programs; do not generate one `.wl` copy per worker.
+
+[Parallel runtime](.agents/skills/mathematica-codex-helper/references/parallel-runtime.md)
+specifies one shared budget across masters, subkernels and native external workers,
+peak-memory estimates, result-assembly headroom and an OS-level monitor that stays
+responsive while Mathematica is busy. It distinguishes adaptive admission from
+hard operating-system containment. Package state, actual outputs and precision
+must remain correct. Small tasks need not be parallelised when overhead dominates.
+
+```text
+$mathematica-codex-helper
+Accelerate this calculation and run independent tasks concurrently.
+First inspect the actual host's CPU, available RAM and kernel limits.
+Use one shared budget and live memory monitoring, reduce concurrency under
+pressure, and inspect each completed result before dependent work.
+Keep the existing mathematical sections; no cloned programs or Summary section.
 ```
-Use the Mathematica skill to write readable code for this physics derivation.
-Use xAct, but first follow the manual examples and state the conventions.
-Use FeynCalc for this gamma-matrix trace and include smoke tests.
-Convert this derivation into a clear Mathematica notebook-style script.
+
+This is an instruction policy, not a bundled scheduler or a claim that a monitor
+is already running. Codex must use available local process/evaluator tools and
+verify their operation. It must not fabricate hardware capacities, a speed-up,
+or protection that its execution environment cannot provide.
+
+## Wolfram patterns used
+
+The design draws on specific published examples, not just generic advice to
+“be readable.” [The source notes](.agents/skills/mathematica-codex-helper/references/manual-example-integration.md)
+connect Quantum Framework evolution, a stress/strain calculation, Euler equations,
+temporary caching and Wolfram's formatting/name/comment prompts to the rules.
+They distinguish observed example presentation from this project's own policies.
+Prompts are design references, not extra paid model calls or proof of correctness.
+
+## Files you may read
+
+```text
+.agents/skills/mathematica-codex-helper/
+  SKILL.md
+  references/
+    wolfram-style-guide.md
+    interactive-workflow.md
+    economy.md
+    parallel-runtime.md
+    manual-example-integration.md
+    physics-package-playbook.md
+  examples/
+    gaussian-ground-state.wl
 ```
 
-## Recommended workflow for package-heavy tasks
+Only the core is needed initially. Read a reference when its topic is relevant,
+not the whole directory for every task. The single built-in-only worked example
+shows sectioned retained code; it is not a package-specific runtime benchmark.
 
-1. Find the official package manual and examples.
-2. Build a short package evidence card.
-3. Run the smallest official example unchanged.
-4. Adapt the example incrementally.
-5. Add physics checks such as limits, symmetries, dimensions, and normalization.
+For scattering amplitudes, use this general style policy alongside the installed
+`ampred-amplitude-calculation` skill for domain-specific contracts. Neither skill
+can infer a package's actual output without running and inspecting it.
 
-## Using this skill
-
-To use this skill in Codex:
-
-1. In the Codex CLI, type `$` to open the skill manager.
-2. Choose the option to **install a skill** and provide the URL of this repository.
-3. Codex will download the `.codex/skills/mathematica-codex-helper` directory and register the skill automatically.
-4. To invoke the skill manually, run `$mathematica-codex-helper` in the Codex CLI when you want help with Mathematica or physics-related tasks.
-5. You can also rely on automatic triggers: the skill will be loaded automatically when your prompt matches one of the triggers defined in `SKILL.md`.
-6. Make sure you’re working within this repository or have installed the skill globally so Codex knows where to find it.
-
-## Wolfram resource integration
-
-This repo now includes a resource-aware scaffold for grounding the skill in official Wolfram resources:
-
-- **Wolfram Prompt Repository** candidates for sample code, reformatting, comments, documentation, naming suggestions, and answer assessment.
-- **Wolfram Example Repository** candidates for verified example-memory, tool-mediated lookup, and reranking patterns.
-- A structured manifest at `data/wolfram-resource-manifest.json`.
-- Offline helper scripts at `scripts/wolfram_resource_lookup.py` and `scripts/extract_wl_examples.py`.
-- A detailed playbook at `.codex/skills/mathematica-codex-helper/references/wolfram-resource-integration.md`.
-
-### Supported integration modes
-
-1. **Docs-only mode**
-   - Uses `SKILL.md` and the static `references/` files.
-   - Requires no Wolfram account, network access, or credentials.
-   - Remains the safe fallback whenever live resources are unavailable.
-
-2. **Resource-aware mode**
-   - Uses the manifest to route tasks to candidate Wolfram prompts or example patterns.
-   - Recommended for package-heavy, physics-heavy, code transformation, naming, and documentation tasks.
-   - Requires verification before claiming that a named prompt or example was used.
-
-3. **Strict validation mode**
-   - Adds an evidence card, smoke test, mathematical or physical sanity check, and uncertainty note.
-   - Recommended when answers depend on unfamiliar Wolfram package APIs or version-sensitive workflows.
-
-### Recommended resource-aware workflow
-
-When a task depends on nontrivial Wolfram Language package usage:
-
-1. Identify the relevant Wolfram prompt or example candidate from the manifest.
-2. Verify the resource through local documentation, installed Wolfram tooling, or live Wolfram access when available.
-3. Build a short evidence card with source checked, minimal example, adaptation map, smoke test, conventions, and remaining uncertainty.
-4. Generate the answer only from verified patterns.
-5. Report one validation check in the final answer.
-
-You can query the local manifest without network access:
+## Maintaining and checking the skill
 
 ```bash
-python scripts/wolfram_resource_lookup.py --kind prompts --query "add comments to Mathematica code"
-python scripts/wolfram_resource_lookup.py --kind examples --query "rerank semantic search snippets"
+python3 tests/check_skill.py
 ```
 
-The helper returns candidate resources only. Verify live Wolfram availability before citing a prompt or example as evidence.
+This standard-library check validates the small distribution, relative links,
+core size, duplicate skill names and lexical balance of the example. It does
+**not** parse Wolfram Language or certify physical results. In Mathematica,
+evaluate the example section by section. Its analytic expected final result is
+`{1, hbar/(2 m omega), hbar omega/2}` under its positive-parameter assumptions;
+that expectation is not a statement that it ran in a particular environment.
 
-You can also extract local Wolfram examples into JSONL:
+To assess behaviour rather than merely file structure, try these tasks:
 
-```bash
-python scripts/extract_wl_examples.py README.md Documentation/ Examples/ --output artifacts/verified-example-snippets.jsonl
-```
+- Refactor a trivial multi-file calculation into one sectioned source while preserving a genuinely reused rules file.
+- Present a new package result with an unexpected head; Codex must inspect it before inventing an extraction.
+- Compare a cheap substitution with a reusable hours-long reduction; only the latter normally merits a checkpoint.
+- Remove execution access; Codex must not claim an observed output or fabricate a passing test.
+- Provide independent jobs plus one dependent branch; Codex should admit independent work within one resource budget, monitor descendants, and keep dependent work gated.
+- Simulate low memory or a failed child; new launches should stop and partial/stale outputs must not be promoted.
+- Request a reusable library explicitly; Codex must use appropriate scoping instead of applying the exploratory default blindly.
 
-The extractor handles fenced Markdown examples and whole `.wl` / `.m` files. It does not parse notebooks directly.
-
-### Credentials and security
-
-Live Wolfram-backed features may require a Wolfram account, internet access, LLM-enabled Wolfram functionality, or secure local credentials.
-
-Never commit credentials to this repository. Use environment variables, OS keychain storage, Wolfram secure credential mechanisms, or another local secret manager.
-
-### Cache and manifests
-
-Suggested future local files:
-
-```
-data/wolfram-resource-manifest.json
-artifacts/verified-example-snippets.jsonl
-artifacts/semantic-index/
-```
-
-Cache only public metadata or user-approved snippets. Do not cache secrets, private notebooks, proprietary package docs, or unpublished research code unless explicitly requested.
-
-## Validation
-
-Run the local validation suite before publishing changes:
-
-```bash
-python -B tests/validate_resource_scaffold.py
-python -B tests/validate_repo_completeness.py
-python -B -m unittest discover -s tests
-python -B -c "import json; json.load(open('data/wolfram-resource-manifest.json', encoding='utf-8')); print('json ok')"
-diff -q .codex/skills/mathematica-codex-helper/SKILL.md .codex/skills/mathematica-codex-helper/skill.md
-```
-
-GitHub Actions runs the same deterministic checks without requiring Wolfram credentials.
-
-## Release
-
-`v0.3.0` upgrades the coding-style guidance for production Mathematica scripts: section/subsection structure, concise Wolfram idioms, annotations, package conflict safety, quiet logging, bounded simplification, parallelism, and separated verification blocks.
+Keep these checks practical. Measure available token usage, runtime, output volume,
+readability and correctness on comparable tasks before claiming improvements.
+Do not add dependencies, bulk documentation downloads or a heavy CI pipeline just
+to maintain an instruction-only skill.
