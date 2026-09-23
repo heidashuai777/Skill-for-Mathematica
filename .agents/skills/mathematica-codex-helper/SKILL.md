@@ -42,14 +42,10 @@ Read only relevant sections, source examples and diffs. Return compact observati
 
 Verify unfamiliar package loaders, signatures, options and conventions against version-matching primary sources and a small example. Metadata inspection is not execution. Keep computation separate from `Short`/`MatrixForm` display wrappers. Use exact inputs and explicit assumptions; preserve regulator order and analytic branches. Inspect before positional extraction or structural replacement. No blanket `Quiet`, global clearing, or treating a numerical spot check as proof.
 
-## Route full amplitude pipelines
-
-For scattering amplitudes using AmpRed, FeynCalc, loop-integral reduction, or master-integral assembly, use the `ampred-amplitude-calculation` skill for its domain-specific workflow.
-
 ## Read more only when needed
 
 - Layout/refactoring: [Wolfram style](references/wolfram-style-guide.md).
 - Execution/inspection failure: [interactive workflow](references/interactive-workflow.md).
 - Storage, runtime or token cost: [economy](references/economy.md).
 - New package or source lookup: [manual/example integration](references/manual-example-integration.md).
-- Amplitudes/tensors/physics: [physics checks](references/physics-package-playbook.md). Use the installed ampred skill for its domain-specific contracts, without duplicating these general rules.
+- Amplitudes/tensors/physics: [physics checks](references/physics-package-playbook.md). Route full QFT scattering-amplitude pipelines to `ampred-amplitude-calculation`.
